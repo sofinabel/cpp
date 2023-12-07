@@ -155,8 +155,8 @@ public:
 	}
 
 
-	Iterator(T* begin, T* end, int pos) :
-		_begin(begin), _end(end), _pos(pos) {
+	Iterator(T* begin, T* end, T* ptr, int pos) :
+		_begin(begin), _end(end), _ptr(ptr), _pos(pos) {
 		pos_to_ij();
 	}
 
@@ -280,7 +280,7 @@ public:
 	}
 
 	//дружественная перегрузка для того чтобы делать не it + 5, а ещё и 5 + it (коммутативность)
-	template <typename T1>
+	/*template <typename T1>
 	friend typename Matrix<T1>::Iterator operator+(difference_type n, const typename Matrix<T1>::Iterator& it) const {
 		typename Matrix<T1>::Iterator shiftedIt = *this;
 
@@ -294,6 +294,7 @@ public:
 		}
 		return shiftedIt;
 	}
+	*/
 };
 
 //итератор окончания смотрит на место ЗА последней ячейкой контейнера
@@ -316,8 +317,9 @@ typename Matrix<T>::Iterator Matrix<T>::begin() {
 			end = &(_values[_rows - _cols / 2 - 1][_cols / 2]);
 		}
 	}
-	return Matrix<T>::Iterator(&(_values[0][_cols - 1]), end, &(_values[0][_cols - 1]));
+	return Matrix<T>::Iterator(&(_values[0][_cols - 1]), end, &(_values[0][_cols - 1]), 0);
 }
+//добавляю размерности костылём в begin и end 
 
 template <typename T>
 typename Matrix<T>::Iterator Matrix<T>::end() {
@@ -338,5 +340,5 @@ typename Matrix<T>::Iterator Matrix<T>::end() {
 			end = &(_values[_rows - _cols / 2 - 1][_cols / 2]);
 		}
 	}
-	return Matrix<T>::Iterator(&(_values[0][_cols - 1]), end, end);
+	return Matrix<T>::Iterator(&(_values[0][_cols - 1]), end, end, _rows * _cols - 1);
 }
